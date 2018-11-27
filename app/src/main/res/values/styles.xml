@@ -18,6 +18,10 @@
         <attr name="divideLineColor" format="color" />
         <attr name="rectAngle" format="dimension" />
         <attr name="focusedColor" format="color"/>
+        <attr name="psdType" format="enum">
+            <enum name="phone" value="0" />
+            <enum name="pwd" value="1" />
+        </attr>
     </declare-styleable>
 
 

@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
 
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
@@ -17,7 +18,7 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
  * Created by zd on 2018/11/27.
  */
 
-public class PayPsdInputView extends EditText {
+public class InputView extends EditText {
     private Context mContext;
     /**
      * 第一个圆开始绘制的圆心坐标
@@ -28,6 +29,7 @@ public class PayPsdInputView extends EditText {
 
     private float cX;
 
+    int psdType = 0;
 
     /**
      * 实心圆的半径
@@ -58,14 +60,6 @@ public class PayPsdInputView extends EditText {
     private int bottomLineColor = Color.GRAY;
 
     /**
-     * 分割线的颜色
-     */
-    private int borderColor = Color.GRAY;
-    /**
-     * 分割线的画笔
-     */
-    private Paint borderPaint;
-    /**
      * 分割线开始的坐标x
      */
     private int divideLineWStartX;
@@ -81,18 +75,12 @@ public class PayPsdInputView extends EditText {
     private int focusedColor = Color.BLUE;
     private RectF rectF = new RectF();
     private RectF focusedRecF = new RectF();
-    private int psdType = 0;
-    private final static int psdType_weChat = 0;
-    private final static int psdType_bottomLine = 1;
 
+    private String texts = "";
     /**
      * 矩形边框的圆角
      */
     private int rectAngle = 0;
-    /**
-     * 竖直分割线的画笔
-     */
-    private Paint divideLinePaint;
     /**
      * 圆的画笔
      */
@@ -115,7 +103,7 @@ public class PayPsdInputView extends EditText {
 
     private onPasswordListener mListener;
 
-    public PayPsdInputView(Context context, AttributeSet attrs) {
+    public InputView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 
@@ -137,6 +125,7 @@ public class PayPsdInputView extends EditText {
 
         divideLineWidth = typedArray.getDimensionPixelSize(R.styleable.PayPsdInputView_divideLineWidth, divideLineWidth);
         divideLineColor = typedArray.getColor(R.styleable.PayPsdInputView_divideLineColor, divideLineColor);
+        psdType = typedArray.getInt(R.styleable.PayPsdInputView_psdType, psdType);
         rectAngle = typedArray.getDimensionPixelOffset(R.styleable.PayPsdInputView_rectAngle, rectAngle);
         focusedColor = typedArray.getColor(R.styleable.PayPsdInputView_focusedColor, focusedColor);
 
@@ -152,9 +141,6 @@ public class PayPsdInputView extends EditText {
 
         bottomLinePaint = getPaint(2, Paint.Style.FILL, bottomLineColor);
 
-        borderPaint = getPaint(3, Paint.Style.STROKE, borderColor);
-
-        divideLinePaint = getPaint(divideLineWidth, Paint.Style.FILL, borderColor);
 
     }
 
@@ -172,8 +158,7 @@ public class PayPsdInputView extends EditText {
         paint.setStyle(style);
         paint.setColor(color);
         paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(12);
+        paint.setTextSize(40);
         return paint;
     }
 
@@ -200,10 +185,38 @@ public class PayPsdInputView extends EditText {
 //       super.onDraw(canvas);
         drawBottomBorder(canvas);
 
-        drawPsdCircle(canvas);
+        switch (psdType){
+            case 0:
+                char[] cc;
+                cc=texts.toCharArray();
+                for (int i = 0; i < cc.length; i++) {
+                    Log.e("sys","cc="+cc[i]);
+                    canvas.drawText(cc[i]+"",startX + i * 2 * startX,
+                            startY,circlePaint);
+                }
+                break;
+            case 1:
+                drawPsdCircle(canvas);
+
+                break;
+        }
     }
 
 
+
+    /**
+     * 画密码实心圆
+     *
+     * @param canvas
+     */
+    private void drawPsdCircle(Canvas canvas) {
+        for (int i = 0; i < textLength; i++) {
+            canvas.drawCircle(startX + i * 2 * startX,
+                    startY,
+                    radius,
+                    circlePaint);
+        }
+    }
     /**
      * 画底部显示的分割线
      *
@@ -220,25 +233,13 @@ public class PayPsdInputView extends EditText {
         }
     }
 
-    /**
-     * 画密码实心圆
-     *
-     * @param canvas
-     */
-    private void drawPsdCircle(Canvas canvas) {
-        for (int i = 0; i < textLength; i++) {
-            canvas.drawCircle(startX + i * 2 * startX,
-                    startY,
-                    radius,
-                    circlePaint);
-        }
-    }
-
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
         this.position = start + lengthAfter;
         textLength = text.toString().length();
+        texts = text.toString();
+        Log.e("onTextChanged",text.toString());
 
         if (textLength == maxCount) {
             if (mListener != null) {

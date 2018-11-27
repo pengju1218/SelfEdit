@@ -6,8 +6,6 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private PayPsdInputView phone;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

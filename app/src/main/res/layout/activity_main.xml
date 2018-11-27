@@ -9,23 +9,25 @@
     >
 
 
-    <com.kkrs.selfedit.PayPsdInputView
+    <com.kkrs.selfedit.InputView
         android:id="@+id/pwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginTop="20dp"
         android:inputType="number"
-        psd:maxCount="6"/>
+        psd:maxCount="6"
+        psd:psdType="pwd"/>
 
-    <com.kkrs.selfedit.PayPhoneInputView
+    <com.kkrs.selfedit.InputView
         android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginTop="20dp"
         android:inputType="number"
-        psd:maxCount="11"/>
+        psd:maxCount="11"
+        psd:psdType="phone"/>
 
 
 </LinearLayout>
